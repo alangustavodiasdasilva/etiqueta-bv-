@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etiqueta de Identificação - Estilo Bureau Veritas</title>
+    <style>
+        /* Estilo da Etiqueta */
+        .label-container {
+            width: 350px;
+            border: 2px solid #C8102E; /* Vermelho Bureau Veritas */
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #FFFFFF; /* Fundo branco puro */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            text-align: left;
+        }
+        .label-logo {
+            margin-right: 15px;
+        }
+        .label-logo img {
+            width: 80px; /* Ajuste o tamanho da logo */
+            height: auto;
+        }
+        .label-content {
+            display: flex;
+            flex-direction: column;
+        }
+        .label-header {
+            font-weight: bold;
+            font-size: 20px;
+            color: #C8102E;
+            margin-bottom: 10px;
+        }
+        .label-info {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .label-info span {
+            font-weight: bold;
+            color: #C8102E;
+        }
+        .label-footer {
+            font-size: 12px;
+            color: #555;
+            margin-top: 15px;
+            font-style: italic;
+        }
+        .input-container {
+            max-width: 350px;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .input-container input, .input-container button {
+            padding: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .input-container button {
+            background-color: #C8102E;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="input-container">
+        <input type="text" id="deviceNameInput" placeholder="CARGO">
+        <input type="text" id="labNameInput" placeholder="Nome do Laboratório">
+        <input type="text" id="patNumberInput" placeholder="Número do Patrimônio">
+        <input type="text" id="positionInput" placeholder="SN">
+        
+        <label>Carregar Logo:</label>
+        <input type="file" id="logoInput" accept="image/*">
+        
+        <button onclick="generateLabel()">Gerar Etiqueta</button>
+    </div>
+
+    <div class="label-container" id="label">
+        <div class="label-logo">
+            <img id="labLogo" src="" alt="Logo do Laboratório" style="display: none;">
+        </div>
+        <div class="label-content">
+            <div class="label-header" id="deviceName">[CARGO]</div>
+            <div class="label-info"><span>Laboratório:</span> <span id="labName">[Nome do Laboratório]</span></div>
+            <div class="label-info"><span>Patrimônio:</span> <span id="patNumber">[Número do Patrimônio]</span></div>
+            <div class="label-info"><span>SN:</span> <span id="position">[Número de Série]</span></div>
+            <div class="label-footer">Etiqueta gerada para identificação oficial</div>
+        </div>
+    </div>
+
+    <button onclick="downloadLabel()">Baixar Etiqueta</button>
+
+    <!-- Importação da biblioteca html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        // Função para carregar a logo a partir do input de arquivo
+        document.getElementById("logoInput").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("labLogo").src = e.target.result;
+                    document.getElementById("labLogo").style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Função para gerar a etiqueta com os dados inseridos
+        function generateLabel() {
+            document.getElementById("deviceName").textContent = document.getElementById("deviceNameInput").value;
+            document.getElementById("labName").textContent = document.getElementById("labNameInput").value;
+            document.getElementById("patNumber").textContent = document.getElementById("patNumberInput").value;
+            document.getElementById("position").textContent = document.getElementById("positionInput").value;
+        }
+
+        // Função para baixar a etiqueta como imagem em alta qualidade
+        function downloadLabel() {
+            const label = document.getElementById("label");
+            html2canvas(label, { scale: 3, useCORS: true }).then(canvas => {
+                const link = document.createElement("a");
+                link.href = canvas.toDataURL("image/png");
+                link.download = "etiqueta_identificacao.png";
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
